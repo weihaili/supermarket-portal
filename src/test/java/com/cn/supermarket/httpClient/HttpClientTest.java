@@ -45,8 +45,8 @@ public class HttpClientTest {
 	
 	@Test
 	public void doPostWithParam() {
-		HttpPost post=new HttpPost("http://localhost:8082/httpclient/postwithparam.html");
-		try {
+		HttpPost post=new HttpPost("http://localhost:8082/httpclient/postwithparam.do");
+		try {   
 			List<NameValuePair> kvList=new ArrayList<>();
 			kvList.add(new BasicNameValuePair("name", "托洛普"));
 			kvList.add(new BasicNameValuePair("password", "123456"));
@@ -71,9 +71,16 @@ public class HttpClientTest {
 		}
 	}
 	
+	/**
+	 * attention: response state code 406
+	 * the reason:1.frame request response html style data,we finally response json style data
+	 *            frame unable convert json to html,so occur 406 code
+	 *            2.check jackson.jar exist
+	 * solution:project in web.xml configuration add intercept path suffix species
+	 */
 	@Test
 	public void doPost2() {
-		HttpPost post=new HttpPost("http://localhost:8082/httpClient/post.html");
+		HttpPost post=new HttpPost("http://localhost:8082/httpClient/post.do");
 		try {
 			CloseableHttpResponse response = httpClient.execute(post);
 			int code = response.getStatusLine().getStatusCode();
@@ -92,7 +99,7 @@ public class HttpClientTest {
 	@Test
 	public void doGetWithParam() {
 		URIBuilder uriBuilder;
-		try {
+		try { 
 			uriBuilder = new URIBuilder("http://www.sogou.com/web");
 			uriBuilder.addParameter("query", "花千骨");
 			HttpGet get=new HttpGet(uriBuilder.build());

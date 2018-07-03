@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.aspectj.weaver.NewConstructorTypeMunger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import com.supermarket.common.utils.HttpClientUtil;
 import com.supermarket.common.utils.JsonUtils;
 import com.supermarket.common.utils.KklResult;
 import com.supermarket.pojo.TbContent;
+import com.supermarket.portal.pojo.BigAdertisingSpacePojo;
 import com.supermarket.portal.service.ContentService;
 
 @Service
@@ -26,22 +28,22 @@ public class ContentServiceImpl implements ContentService {
 	@Override
 	public String getContentList() {
 		String result = HttpClientUtil.doGet(serverAddr+url);
-		List<Map> resultList=null;
+		List<BigAdertisingSpacePojo> resultList=null;
 		try {
 			KklResult kklResult = KklResult.formatToList(result, TbContent.class);
 			List<TbContent> list=(List<TbContent>) kklResult.getData();
 			resultList=new ArrayList<>();
 			for (TbContent tbContent : list) {
-				Map map=new HashMap();
-				map.put("srcB", tbContent.getPic());
-				map.put("height", 240);
-				map.put("alt", tbContent.getSubTitle());
-				map.put("width", 670);
-				map.put("srcB", tbContent.getPic2());
-				map.put("heightB", 550);
-				map.put("href", tbContent.getUrl());
-				map.put("widthB", 240);
-				resultList.add(map);
+				BigAdertisingSpacePojo pojo=new BigAdertisingSpacePojo();
+				pojo.setAlt(tbContent.getSubTitle());
+				pojo.setHeight(240);
+				pojo.setHeightB(240);
+				pojo.sethref(tbContent.getUrl());
+				pojo.setSrc(tbContent.getPic());
+				pojo.setSrcB(tbContent.getPic2());
+				pojo.setWidth(670);
+				pojo.setWidthB(550);
+				resultList.add(pojo);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
