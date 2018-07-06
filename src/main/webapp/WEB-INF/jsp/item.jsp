@@ -5,7 +5,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>${item.title } - 淘淘</title>
+	<title>${item.title } - KKL</title>
 	<script>var jdpts = new Object(); jdpts._st = new Date().getTime();</script>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" type="text/css" href="/css/taotao.css" media="all" />
@@ -55,7 +55,7 @@
 <script type="text/javascript">pageConfig.product.marketPrice='';</script>
 <ul id="summary">
 	<li id="summary-price">
-		<div class="dt">淘&nbsp;淘&nbsp;价：</div>
+		<div class="dt">K&nbsp;KL&nbsp;价：</div>
 		<div class="dd">
 			<strong class="p-price"  id="jd-price">￥<fmt:formatNumber groupingUsed="false" maxFractionDigits="2" minFractionDigits="2" value="${item.price / 100 }"/> </strong>
 			<a id="notice-downp" href="#none" target="_blank" clstag="shangpin|keycount|product|jiangjia">(降价通知)</a>
@@ -85,7 +85,7 @@
 	</li>
 	<li id="summary-service" class="hide">
 		<div class="dt">服&#x3000;&#x3000;务：</div>
-		<div class="dd">由 淘淘 发货并提供售后服务。</div>
+		<div class="dd">由 KKL 发货并提供售后服务。</div>
 	</li>
 	<li id="summary-tips"  class="hide">
 		<div class="dt">温馨提示：</div>
@@ -102,7 +102,7 @@
 </ul><!--summary end-->
 		<div id="brand-bar" clstag="shangpin|keycount|product|btn-coll">
 	<dl class="slogens">
-		<dt>淘淘·正品保证</dt>
+		<dt>KKL·正品保证</dt>
 		<dd class="fore1">
 			<a target="_blank" href="http://help.360buy.com/help/question-67.html"><b></b><span>货到</span><span>付款</span></a>
 		</dd>
@@ -221,6 +221,7 @@
 					<b></b>如果您发现商品信息不准确，欢迎纠错
 				</div>
 				<div id="item-desc" class="detail-content">
+				<!-- item description information -->
 						${itemDesc.itemDesc }
 				</div>
 			</div>
