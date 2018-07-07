@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import com.supermarket.common.utils.HttpClientUtil;
 import com.supermarket.common.utils.JsonUtils;
 import com.supermarket.common.utils.KklResult;
-import com.supermarket.pojo.TbItem;
 import com.supermarket.pojo.TbItemDesc;
 import com.supermarket.pojo.TbItemParamItem;
+import com.supermarket.portal.pojo.ItemPo;
 import com.supermarket.portal.service.ItemService;
 
 /**   
@@ -37,14 +37,14 @@ public class ItemServiceImpl implements ItemService {
 	private String itemParamURL;
 
 	@Override
-	public TbItem getItemBaseInfo(long itemId) {
+	public ItemPo getItemBaseInfo(long itemId) {
 		try {
 			String doGetResultStr = HttpClientUtil.doGet(REST_SERVICE+itemBaseInfoURL+itemId);
 			System.out.println("getItemBaseInfo"+doGetResultStr);
 			if (!StringUtils.isBlank(doGetResultStr)) {
-				KklResult kklResult = KklResult.formatToPojo(doGetResultStr, TbItem.class);
+				KklResult kklResult = KklResult.formatToPojo(doGetResultStr, ItemPo.class);
 				if (kklResult.getStatus()==200) {
-					TbItem item=(TbItem) kklResult.getData();
+					ItemPo item=(ItemPo) kklResult.getData();
 					return item;
 				}
 			}

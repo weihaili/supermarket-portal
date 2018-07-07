@@ -1,6 +1,6 @@
 package com.supermarket.portal.service;
 
-import com.supermarket.pojo.TbItem;
+import com.supermarket.portal.pojo.ItemPo;
 
 /**   
  * @ClassName: ItemService   
@@ -19,7 +19,7 @@ public interface ItemService {
 	 * @return: TbItem      
 	 * @throws   
 	 */ 
-	TbItem getItemBaseInfo(long itemId);
+	ItemPo getItemBaseInfo(long itemId);
 	
 	String getItemDescInformation(long itemId);
 	
