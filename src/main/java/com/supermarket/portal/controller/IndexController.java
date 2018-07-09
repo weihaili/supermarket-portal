@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +28,19 @@ public class IndexController {
 		String adJsonStr = Service.getContentList();
 		model.addAttribute("ad1", adJsonStr);
 		return "index";
+	}
+	
+	@RequestMapping(value="/user/logout")
+	public String secureLogout(String token,Model model) {
+		KklResult result=Service.secureLogout(token);
+		if (result!=null) {
+			if (result.getStatus()==200) {
+				String jString = Service.getContentList();
+				model.addAttribute("ad1",jString);
+				return "index";
+			}
+		}
+		return null;
 	}
 	
 	@RequestMapping(value="/httpClient/post",method=RequestMethod.POST)

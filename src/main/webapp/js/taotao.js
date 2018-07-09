@@ -11,7 +11,8 @@ var TT = TAOTAO = {
 			success : function(data){
 				if(data.status == 200){
 					var username = data.data.username;
-					var html = username + "，欢迎来到淘淘！<a href=\"http://www.taotao.com/user/logout.html\" class=\"link-logout\">[退出]</a>";
+					var logoutURL="http://localhost:8082/user/logout.html?token="+ _ticket;
+					var html = username + "，欢迎来到淘淘！<a href="+logoutURL+" class=\"link-logout\">[退出]</a>";
 					$("#loginbar").html(html);
 				}
 			}

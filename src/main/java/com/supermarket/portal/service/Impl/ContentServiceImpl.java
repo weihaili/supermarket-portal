@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.weaver.NewConstructorTypeMunger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,12 @@ import com.supermarket.pojo.TbContent;
 import com.supermarket.portal.pojo.BigAdertisingSpacePojo;
 import com.supermarket.portal.service.ContentService;
 
+/**   
+ * @ClassName: ContentServiceImpl   
+ * @Description: TODO(use one sentence describing the role of this class)   
+ * @author: KKL 
+ * @date: 2018年7月9日 下午4:19:02      
+ */  
 @Service
 public class ContentServiceImpl implements ContentService {
 	
@@ -24,6 +31,12 @@ public class ContentServiceImpl implements ContentService {
 	
 	@Value("${REST_INDEX_AD_URL}")
 	private String url;
+	
+	@Value("${SSO_BASE_URL}")
+	private String SSO_BASE_URL;
+	
+	@Value("${SECURE_LOGOUT_URL}")
+	private String SECURE_LOGOUT_URL;
 
 	@Override
 	public String getContentList() {
@@ -50,6 +63,21 @@ public class ContentServiceImpl implements ContentService {
 			return null;
 		}
 		return JsonUtils.objectToJson(resultList);
+	}
+
+	@Override
+	public KklResult secureLogout(String token) {
+		KklResult toPojo=null;
+		String doGetStr = HttpClientUtil.doGet(SSO_BASE_URL+SECURE_LOGOUT_URL+token);
+		try {
+			if (!StringUtils.isBlank(doGetStr)) {
+				toPojo = JsonUtils.jsonToPojo(doGetStr, KklResult.class);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return toPojo;
 	}
 
 }
