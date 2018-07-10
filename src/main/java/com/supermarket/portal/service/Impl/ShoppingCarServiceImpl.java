@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.supermarket.common.utils.CookieUtils;
+import com.supermarket.common.utils.ExceptionUtil;
 import com.supermarket.common.utils.HttpClientUtil;
 import com.supermarket.common.utils.JsonUtils;
 import com.supermarket.common.utils.KklResult;
@@ -53,30 +54,42 @@ public class ShoppingCarServiceImpl implements ShoppingCarService {
 	 */ 
 	@Override
 	public KklResult addItem(HttpServletRequest request,HttpServletResponse response,long itemId, int num) {
-		String doGetStr = HttpClientUtil.doGet(REST_BASIC_URL+itemBaseURL+itemId);
-		if (StringUtils.isBlank(doGetStr)) {
-			System.out.println("ShoppingCarServiceImpl.addItem.doGet return valuse is null ,please check");
-			return null;
+		String doGetStr="";
+		try {
+			doGetStr = HttpClientUtil.doGet(REST_BASIC_URL+itemBaseURL+itemId);
+			if (StringUtils.isBlank(doGetStr)) {
+				System.out.println("rest service no response message");
+				return KklResult.build(400, "rest service no response message");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return KklResult.build(400, ExceptionUtil.getStackTrace(e));
 		}
 		CartItem carItem=null;
-		List<CartItem> itemList=null;
-		itemList = getCartItemList(request);
+		 List<CartItem> itemList = getCartItemList(request);
 		if (itemList!=null && itemList.size()>0) {
 			for (CartItem cItem : itemList) {
 				if (cItem.getId()==itemId) {
+					cItem.setNum(cItem.getNum()+num);
 					carItem=cItem;
-					carItem.setNum(carItem.getNum()+num);
 					break;
 				}
 			}
 		}
-		KklResult pojo = KklResult.formatToPojo(doGetStr, TbItem.class);
+		
+		KklResult pojo=null;
+		try {
+			pojo = KklResult.formatToPojo(doGetStr, TbItem.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return KklResult.build(500, ExceptionUtil.getStackTrace(e));
+		}
 		if (null==pojo) {
 			System.out.println("ShoppingCarServiceImpl.addItem.formatToPojo fail,please check");
-			return null;
+			return KklResult.build(500, "data convert exception"+itemId);
 		}
+		
 		if (null==carItem) {
-			itemList=new ArrayList<CartItem>();
 			carItem=new CartItem();
 			if (pojo.getStatus()==200) {
 				TbItem item=(TbItem) pojo.getData();
@@ -102,18 +115,84 @@ public class ShoppingCarServiceImpl implements ShoppingCarService {
 	 */ 
 	private List<CartItem> getCartItemList(HttpServletRequest request){
 		//get item list from cookie
+		List<CartItem> list = new ArrayList<>();
 		String cookieValueJson = CookieUtils.getCookieValue(request, cartNameInCookie, true);
 		if (StringUtils.isBlank(cookieValueJson)) {
-			return null;
+			System.out.println("no product inoformation in the cookie,please chose product");
+			return list;
 		}
 		//convert this json to item list
-		List<CartItem> list = null;
 		try {
 			list = JsonUtils.jsonToList(cookieValueJson, CartItem.class);
 		} catch (Exception e) {
+			System.out.println("json to list exception please check,cart operation");
 			e.printStackTrace();
+			return list;
 		}
 		return list;
 	}
 
+	/**   
+	 * <p>Title: getCartItemList</p>   
+	 * <p>Description: get item list from cookie</p>   
+	 * @param request
+	 * @param response
+	 * @return   
+	 * @see com.supermarket.portal.service.ShoppingCarService#getCartItemList(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)   
+	 */ 
+	@Override
+	public List<CartItem> getCartItemList(HttpServletRequest request, HttpServletResponse response) {
+		List<CartItem> cartItemList = getCartItemList(request);
+		return cartItemList;
+	}
+
+	/**   
+	 * <p>Title: updateItemNum</p>   
+	 * <p>Description: modify item quantity in cookie</p>   
+	 * @param request
+	 * @param response
+	 * @param itemId
+	 * @param num
+	 * @return   
+	 * @see com.supermarket.portal.service.ShoppingCarService#updateItemNum(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Long, java.lang.Integer)   
+	 */ 
+	@Override
+	public KklResult updateItemNum(HttpServletRequest request, HttpServletResponse response, Long itemId, Integer num) {
+		List<CartItem> cartItemList = getCartItemList(request);
+		for (CartItem cartItem : cartItemList) {
+			if (itemId==cartItem.getId()) {
+				cartItem.setNum(num);
+			}
+		}
+		CookieUtils.setCookie(request, response, cartNameInCookie, JsonUtils.objectToJson(cartItemList),true);
+		return KklResult.ok();
+	}
+
+	/**   
+	 * <p>Title: deleteCartItemByItemId</p>   
+	 * <p>Description: delete item by itemId in cart</p>   
+	 * @param request
+	 * @param response
+	 * @param itemId
+	 * @return   
+	 * @see com.supermarket.portal.service.ShoppingCarService#deleteCartItemByItemId(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Long)   
+	 */ 
+	@Override
+	public KklResult deleteCartItemByItemId(HttpServletRequest request, HttpServletResponse response, Long itemId) {
+		List<CartItem> cartItemList = getCartItemList(request);
+		for (CartItem cartItem : cartItemList) {
+			if (itemId==cartItem.getId()) {
+				cartItemList.remove(cartItem);
+				break;
+			}
+		}
+		if (cartItemList!=null) {
+			CookieUtils.setCookie(request, response, cartNameInCookie, JsonUtils.objectToJson(cartItemList), true);
+		}
+		return KklResult.ok();
+	}
+	
+	
+
+	
 }
