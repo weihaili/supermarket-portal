@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.supermarket.common.utils.KklResult;
+import com.supermarket.pojo.TbUser;
 import com.supermarket.portal.pojo.CartItem;
 import com.supermarket.portal.pojo.Order;
 import com.supermarket.portal.service.OrderService;
@@ -49,8 +50,11 @@ public class OrderController {
 	}
 	
 	@RequestMapping(value="/order/create",method=RequestMethod.POST)
-	public String createNewOrder(Order order,Model model) {
+	public String createNewOrder(HttpServletRequest request,Order order,Model model) {
 		try {
+			TbUser user = (TbUser) request.getAttribute("user");
+			order.setUserId(user.getId());
+			order.setBuyerNick(user.getUsername());
 			KklResult result = orderService.createNewOrder(order);
 			String orderId = (String) result.getData();
 			model.addAttribute("orderId", orderId);

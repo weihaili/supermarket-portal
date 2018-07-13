@@ -9,7 +9,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.supermarket.common.utils.CookieUtils;
 import com.supermarket.pojo.TbUser;
-import com.supermarket.portal.service.UserService;
 import com.supermarket.portal.service.Impl.UserServiceImpl;
 
 public class LoginInterceptor implements HandlerInterceptor {
@@ -54,6 +53,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 			response.sendRedirect(userService.ssoBaseURL+userService.ssoPageLoginURL+"?redirect="+request.getRequestURL());
 			return false;
 		}
+		request.setAttribute("user", tbUser);
 		return true;
 	}
 
